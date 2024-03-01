@@ -23,9 +23,9 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.security.config.Elements.JWT;
 
 @OpenAPIDefinition(
-        servers =
-                @Server(url = "{${app.backend-api}", description = "Production Server"),
-                @Server(url = "http://localhost:8080", description = "Local Server"),
+        servers = {
+                @Server(url = "{${app.backend-api}}", description = "Production Server"),
+                @Server(url = "http://localhost:8080", description = "Local Server")
         },
         tags = {
                 @Tag(name = "Auth", description = "인증"),
