@@ -2,6 +2,8 @@ package org.example.yulion.domain.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.yulion.domain.auth.exception.AuthException;
+import org.example.yulion.domain.auth.exception.AuthExceptionType;
 import org.example.yulion.global.auth.refreshtoken.RefreshToken;
 import org.example.yulion.global.auth.refreshtoken.RefreshTokenService;
 import org.example.yulion.global.exception.AuthErrorException;
@@ -30,9 +32,10 @@ public class AuthLogoutService {
 
     private void checkTokenOwner(final String currentSubject, final String tokenSubject) {
         if (!currentSubject.equals(tokenSubject)) {
-            final var errorMessage = String.format("비정상적인 로그아웃 시도! 현재 멤버 ID: %s, But tried ID: %s", currentSubject, tokenSubject);
-            log.warn(errorMessage);
-            throw new AuthErrorException(errorMessage);
+            throw new AuthException(AuthExceptionType.WRONG_LOGOUT_TRIAL);
+//            final var errorMessage = String.format("비정상적인 로그아웃 시도! 현재 멤버 ID: %s, But tried ID: %s", currentSubject, tokenSubject);
+//            log.warn(errorMessage);
+//            throw new AuthErrorException(errorMessage);
         }
     }
 

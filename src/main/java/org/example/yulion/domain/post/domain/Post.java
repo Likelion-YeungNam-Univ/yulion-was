@@ -54,7 +54,7 @@ public class Post extends BaseTimeEntity {
     private LocalDateTime deletedAt;
 
     @Builder
-    private Post (String title, String content, Long viewCnt, String members, User writer, Category category, Part part, String mentor){
+    private Post(String title, String content, Long viewCnt, String members, User writer, Category category, Part part, String mentor){
         this.title = title;
         this.content = content;
         this.viewCnt = viewCnt;

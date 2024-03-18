@@ -10,6 +10,8 @@ import org.example.yulion.domain.post.domain.Part;
 import org.example.yulion.domain.post.domain.Post;
 import org.example.yulion.domain.post.dto.request.PostCreateRequest;
 import org.example.yulion.domain.post.dto.response.*;
+import org.example.yulion.domain.post.exception.PostException;
+import org.example.yulion.domain.post.exception.PostExceptionType;
 import org.example.yulion.domain.post.repository.PostRepository;
 import org.example.yulion.domain.user.domain.User;
 import org.example.yulion.domain.user.repository.UserRepository;
@@ -35,7 +37,7 @@ public class PostService {
     public PostDetailResponse addPost(PostCreateRequest request, Long userId) {
         // 인증 구현전 테스팅용 유저 정보 가져오기
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 유저"));
+                .orElseThrow(() -> new PostException(PostExceptionType.WRITER_NOT_FOUND));
 
         Post post = createPost(request, user);
         Post savedPost = postRepository.save(post);
@@ -59,7 +61,7 @@ public class PostService {
 
     public PostDetailResponse getPost(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글 없음"));
+                .orElseThrow(() -> new PostException(PostExceptionType.POST_NOT_FOUND));
 
         return PostDetailResponse.from(post);
     }
@@ -107,9 +109,9 @@ public class PostService {
 
     public Post CheckPostOwner(Long postId, Long userId){
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글 없음"));
+                .orElseThrow(() -> new PostException(PostExceptionType.POST_NOT_FOUND));
         if (!post.getWriter().getId().equals(userId)) {
-            throw new IllegalArgumentException("작성자만 수정 가능합니다.");
+            throw new PostException(PostExceptionType.UNAUTHORIZED_POST);
         }
         return post;
     }

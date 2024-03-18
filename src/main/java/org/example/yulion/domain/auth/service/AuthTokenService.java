@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.yulion.domain.auth.dto.request.LoginRequest;
 import org.example.yulion.domain.auth.dto.response.TokenDto;
+import org.example.yulion.domain.auth.exception.AuthException;
+import org.example.yulion.domain.auth.exception.AuthExceptionType;
 import org.example.yulion.domain.user.domain.User;
 import org.example.yulion.domain.user.repository.UserRepository;
 import org.example.yulion.global.auth.TokenFacade;
@@ -37,7 +39,7 @@ public class AuthTokenService {
     public TokenDto login(final LoginRequest loginRequest) {
 
         final CustomUserDetails userDetails = setAuthentication(loginRequest);
-
+        log.info("1");
         final String userId = userDetails.getId().toString();
 
         log.info("로그인 성공. Member ID : {}", userId);
@@ -59,19 +61,16 @@ public class AuthTokenService {
 
     private CustomUserDetails setAuthentication(final LoginRequest loginRequest) {
         final Long userId = findUserIdByEmail(loginRequest.email());
-
+        log.info(userId.toString());
         final Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(userId, loginRequest.password()));
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
         return (CustomUserDetails) authentication.getPrincipal();
     }
 
     private Long findUserIdByEmail(final String email) {
         final User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(email));
+                .orElseThrow(() -> new AuthException(AuthExceptionType.INVALID_CREDENTIALS));
         return user.getId();
     }
-
 }
